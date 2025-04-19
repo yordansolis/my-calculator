@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Pagos de Contratos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        :root {
+            --bg-dark: #000000;
+            --bg-card: #111111;
+            --bg-input: #1a1a1a;
+            --bg-light: #222222;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --accent-color: #0070f3;
+            --accent-hover: #0051ca;
+            --border-color: #333333;
+            --success-color: #0070f3;
+            --table-hover: rgba(0, 112, 243, 0.1);
+            --table-header: #1a1a1a;
+            --table-border: #333333;
+        }
+        
+        body {
+            background-color: var(--bg-dark);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-primary);
+        }
+
+        .card {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s, box-shadow 0.3s;
+            background-color: var(--bg-card);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        .card-header {
+            background: linear-gradient(45deg, #000000, var(--accent-color));
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .card-body {
+            background-color: var(--bg-card);
+        }
+
+        .bg-light {
+            background-color: var(--bg-light) !important;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .form-control, .input-group-text {
+            border-radius: 8px;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 0.25rem rgba(0, 112, 243, 0.25);
+            background-color: var(--bg-input);
+            color: var(--text-primary);
+            border-color: var(--accent-color);
+        }
+
+        .form-label {
+            color: var(--text-secondary);
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #0051ca, var(--accent-color));
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #003d96, #0062d3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 112, 243, 0.4);
+        }
+
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+            color: var(--text-primary);
+            border-color: var(--table-border);
+        }
+
+        .table-primary {
+            background-color: var(--table-header);
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--accent-color);
+        }
+        
+        .table-striped > tbody > tr:nth-of-type(odd) {
+            background-color: rgba(26, 26, 26, 0.6);
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: var(--table-hover);
+        }
+
+        #resultadoResumen .card, #resultadoTabla {
+            box-shadow: 0 4px 6px rgba(58, 56, 56, 0.3);
+        }
+
+        /* Para dar formato al input del selector de fecha */
+        .flatpickr-input {
+            background-color: var(--bg-input) !important;
+            color: var(--text-primary) !important;
+        }
+
+        .flatpickr-day.selected {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .text-muted {
+            color: var(--text-secondary) !important;
+        }
+
+        .alert-danger {
+            background-color: rgba(220, 53, 69, 0.2);
+            border-color: rgba(220, 53, 69, 0.3);
+            color: #ff6b6b;
+        }
+
+        /* Estilos para la tabla */
+        #tablaPagos tr:last-child {
+            font-weight: bold;
+            background-color: rgba(0, 112, 243, 0.15);
+        }
+
+        /* Estilos para la tabla con muchas columnas */
+        .table-sm th, .table-sm td {
+            font-size: 0.9rem;
+            padding: 0.4rem !important;
+            white-space: nowrap;
+            border-color: var(--table-border);
+        }
+        
+        .table-sm th {
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        /* Alineación específica para columnas numéricas */
+        .table-sm td:nth-child(5),
+        .table-sm td:nth-child(6),
+        .table-sm td:nth-child(7),
+        .table-sm td:nth-child(8),
+        .table-sm td:nth-child(9),
+        .table-sm td:nth-child(10),
+        .table-sm td:nth-child(11),
+        .table-sm td:nth-child(12) {
+            text-align: right;
+        }
+        
+        .table-sm thead th {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        /* Estilos responsivos para móviles */
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 1rem;
+            }
+            
+            .table-responsive {
+                font-size: 0.85rem;
+            }
+        }
+        
+        /* Personalización del spinner */
+        .spinner-border {
+            color: var(--accent-color);
+        }
+        
+        /* Estilos para flatpickr en modo oscuro */
+        .flatpickr-calendar {
+            background: var(--bg-card);
+            border-color: var(--border-color);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .flatpickr-current-month .flatpickr-monthDropdown-months,
+        .flatpickr-current-month input.cur-year {
+            color: var(--text-primary);
+        }
+        
+        .flatpickr-day {
+            color: var(--text-primary);
+        }
+        
+        .flatpickr-day.disabled {
+            color: var(--text-secondary);
+        }
+        
+        .flatpickr-months .flatpickr-prev-month, 
+        .flatpickr-months .flatpickr-next-month {
+            color: var(--text-primary);
+            fill: var(--text-primary);
+        }
+        
+        .flatpickr-weekdays {
+            background: var(--bg-card);
+        }
+        
+        span.flatpickr-weekday {
+            color: var(--accent-color);
+        }
+
+        /* Mejora para visibilidad de texto en resumen */
+        #resultadoResumen strong {
+            color: var(--text-primary);
+        }
+
+        hr {
+            border-color: var(--border-color);
+            opacity: 0.5;
+        }
+
+        /* Ajuste para el texto en la tarjeta de resumen */
+        .bg-light .d-flex {
+            color: var(--text-primary);
+        }
+
+        /* Mejora para la visibilidad del modo oscuro de flatpickr */
+        .flatpickr-calendar.arrowTop:after {
+            border-bottom-color: var(--bg-card);
+        }
+
+        .flatpickr-calendar.arrowBottom:after {
+            border-top-color: var(--bg-card);
+        }
+
+        .flatpickr-months {
+            background-color: var(--bg-card);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-lg-10">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white text-center py-3">
+                        <h2>Calculadora de Pagos de Contratos</h2>
+                        <p class="mb-0">Método de valor mensual fijo con saldo final separado</p>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <form id="calculadoraForm">
+                                    <div class="mb-3">
+                                        <label for="valorContrato" class="form-label">Valor Total del Contrato (COP)</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">$</span>
+                                            <input type="text" class="form-control" id="valorContrato" placeholder="Ej: 10000000" required>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="fechaInicio" class="form-label">Fecha de Inicio</label>
+                                        <input type="text" class="form-control datepicker" id="fechaInicio" placeholder="DD/MM/YYYY" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="fechaFin" class="form-label">Fecha de Finalización</label>
+                                        <input type="text" class="form-control datepicker" id="fechaFin" placeholder="DD/MM/YYYY" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="valorMensual" class="form-label">Valor Mensual Fijo (COP)</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">$</span>
+                                            <input type="text" class="form-control" id="valorMensual" placeholder="Ej: 1000000" required>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100">Calcular Pagos</button>
+                                </form>
+                            </div>
+                            <div class="col-lg-6">
+                                <div id="resultadoResumen" class="d-none">
+                                    <h4 class="text-center mb-3 text-white">Resumen</h4>
+                                    <div class="card bg-light mb-3">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <strong>Valor del Contrato:</strong>
+                                                <span id="resumenValorContrato"></span>
+                                            </div>
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <strong>Duración:</strong>
+                                                <span id="resumenDuracion"></span>
+                                            </div>
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <strong>Valor Mensual Fijo:</strong>
+                                                <span id="resumenValorMensual"></span>
+                                            </div>
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <strong>Valor Diario de Referencia:</strong>
+                                                <span id="resumenValorDiario"></span>
+                                            </div>
+                                            <hr>
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <strong>Total Pagos Programados:</strong>
+                                                <span id="resumenTotalPagos"></span>
+                                            </div>
+                                            <div class="d-flex justify-content-between">
+                                                <strong>Diferencia:</strong>
+                                                <span id="resumenDiferencia"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="spinner" class="text-center d-none mt-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Calculando...</span>
+                            </div>
+                            <p>Calculando resultados...</p>
+                        </div>
+                        
+                        <div id="resultadoTabla" class="mt-4 d-none">
+                            <h4 class="text-center mb-3 text-white">Distribución de Pagos</h4>
+                            <div class="table-responsive" style="overflow-x: auto; max-width: 100%;">
+                                <table class="table table-striped table-hover table-sm">
+                                    <thead class="table-primary">
+                                        <tr>
+                                            <th>Mes</th>
+                                            <th>Pago</th>
+                                            <th>Fecha Inicio</th>
+                                            <th>Fecha Fin</th>
+                                            <th>Días</th>
+                                            <th>Días del mes</th>
+                                            <th>Valor Base</th>
+                                            <th>Valor Pago</th>
+                                            <th>Valor Acumulado</th>
+                                            <th>Porcentaje</th>
+                                            <th>Porcentaje Acumulado</th>
+                                            <th>Saldo Restante</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tablaPagos">
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="mt-3 small text-muted text-center">
+                                <p>Desplaza horizontalmente para ver todos los datos</p>
+                            </div>
+                        </div>
+                        
+                        <div id="errorAlert" class="alert alert-danger mt-3 d-none" role="alert">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer mt-5 py-3 bg-dark text-light">
+        <div class="container text-center">
+            <div class="row">
+                <div class="col-md-12">
+                    <h5>Autor</h5>
+                    <p class="mb-1"><strong>Jhordan Andres Asprilla Solis</strong></p>
+                    <p class="mb-1"><strong>Haminton Mena Mena </strong></p>
+
+                    <p class="mb-1">Ingeniero de Sistemas</p>
+                    <p class="mb-1">Contacto: <a href="tel:+573113834658" class="text-light">+57 3113834658</a></p>
+                    <p class="mb-0">LinkedIn: <a href="https://www.linkedin.com/in/jhordan-solis/" target="_blank" class="text-light">Jhordan Solis</a></p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configurar flatpickr para modo oscuro
+            const fechaConfig = {
+                dateFormat: "d/m/Y",
+                locale: "es",
+                allowInput: true,
+                theme: "dark"
+            };
+            
+            flatpickr(".datepicker", fechaConfig);
+            
+            // Formato de números para los inputs
+            const formatearNumero = (input) => {
+                input.addEventListener('input', function(e) {
+                    // Eliminar todo excepto números
+                    let valor = this.value.replace(/[^\d]/g, '');
+                    
+                    // Formatear con puntos como separadores de miles
+                    if (valor.length > 0) {
+                        valor = parseInt(valor).toLocaleString('es-CO');
+                    }
+                    
+                    this.value = valor;
+                });
+            };
+            
+            // Aplicar formato a los campos numéricos
+            formatearNumero(document.getElementById('valorContrato'));
+            formatearNumero(document.getElementById('valorMensual'));
+            
+            // Manejar envío del formulario
+            document.getElementById('calculadoraForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Mostrar spinner de carga
+                document.getElementById('spinner').classList.remove('d-none');
+                document.getElementById('resultadoTabla').classList.add('d-none');
+                document.getElementById('resultadoResumen').classList.add('d-none');
+                document.getElementById('errorAlert').classList.add('d-none');
+                
+                // Obtener valores del formulario
+                const valorContratoStr = document.getElementById('valorContrato').value;
+                const fechaInicioStr = document.getElementById('fechaInicio').value;
+                const fechaFinStr = document.getElementById('fechaFin').value;
+                const valorMensualStr = document.getElementById('valorMensual').value;
+                
+                // Validar que las fechas tengan el formato correcto
+                if (!validarFormatoFecha(fechaInicioStr) || !validarFormatoFecha(fechaFinStr)) {
+                    mostrarError('Por favor, ingrese las fechas en formato DD/MM/YYYY');
+                    return;
+                }
+                
+                try {
+                    // Convertir valores
+                    const valorContrato = parseFloat(valorContratoStr.replace(/\./g, '').replace(',', '.'));
+                    const valorMensual = parseFloat(valorMensualStr.replace(/\./g, '').replace(',', '.'));
+                    
+                    // Convertir fechas
+                    const partesFechaInicio = fechaInicioStr.split('/');
+                    const partesFechaFin = fechaFinStr.split('/');
+                    
+                    const fechaInicio = new Date(
+                        parseInt(partesFechaInicio[2]), 
+                        parseInt(partesFechaInicio[1]) - 1, 
+                        parseInt(partesFechaInicio[0])
+                    );
+                    
+                    const fechaFin = new Date(
+                        parseInt(partesFechaFin[2]), 
+                        parseInt(partesFechaFin[1]) - 1, 
+                        parseInt(partesFechaFin[0])
+                    );
+                    
+                    // Validar datos
+                    if (isNaN(valorContrato) || valorContrato <= 0) {
+                        mostrarError('El valor del contrato debe ser un número positivo');
+                        return;
+                    }
+                    
+                    if (isNaN(valorMensual) || valorMensual <= 0) {
+                        mostrarError('El valor mensual debe ser un número positivo');
+                        return;
+                    }
+                    
+                    if (fechaFin <= fechaInicio) {
+                        mostrarError('La fecha de finalización debe ser posterior a la fecha de inicio');
+                        return;
+                    }
+                    
+                    // Calcular distribución de pagos
+                    setTimeout(() => {
+                        const resultados = calcularPagosContrato(valorContrato, fechaInicio, fechaFin, valorMensual);
+                        document.getElementById('spinner').classList.add('d-none');
+                        mostrarResultados(resultados, valorContrato, fechaInicio, fechaFin, valorMensual);
+                    }, 500); // Pequeño delay para mostrar el spinner
+                    
+                } catch (error) {
+                    document.getElementById('spinner').classList.add('d-none');
+                    mostrarError('Error en el cálculo: ' + error.message);
+                }
+            });
+            
+            // Validar formato de fecha (DD/MM/YYYY)
+            function validarFormatoFecha(fecha) {
+                const regex = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
+                return regex.test(fecha);
+            }
+            
+            // Mostrar mensaje de error
+            function mostrarError(mensaje) {
+                const errorAlert = document.getElementById('errorAlert');
+                errorAlert.textContent = mensaje;
+                errorAlert.classList.remove('d-none');
+            }
+            
+            // Calcular los pagos del contrato (implementado en JavaScript)
+            // function calcularPagosContrato(contract_value, start_date, end_date, monthly_value) {
+            //     // Implementación JavaScript del algoritmo de cálculo
+            //     const meses = [];
+            //     let fecha_actual = new Date(start_date);
+                
+            //     // Generar lista de meses de manera idéntica a Python
+            //     while (fecha_actual <= end_date) {
+            //         meses.push({
+            //             year: fecha_actual.getFullYear(),
+            //             month: fecha_actual.getMonth()
+            //         });
+                    
+            //         // Simular: siguiente_mes = fecha_actual.replace(day=28) + datetime.timedelta(days=4)
+            //         let siguiente_mes = new Date(fecha_actual.getFullYear(), fecha_actual.getMonth(), 28);
+            //         siguiente_mes.setDate(siguiente_mes.getDate() + 4);
+            //         // Simular: fecha_actual = siguiente_mes.replace(day=1)
+            //         fecha_actual = new Date(siguiente_mes.getFullYear(), siguiente_mes.getMonth(), 1);
+            //     }
+                
+            //     const datos_mes = [];
+            //     let pago_acumulado = 0;
+            //     let porcentaje_acumulado = 0;
+                
+            //     for (let i = 0; i < meses.length; i++) {
+            //         const year = meses[i].year;
+            //         const month = meses[i].month;
+                    
+            //         // Determinar período exactamente igual que en Python
+            //         const inicio_mes = i === 0 ? new Date(start_date) : new Date(year, month, 1);
+                    
+            //         let fin_mes;
+            //         if (i === meses.length - 1) {
+            //             fin_mes = new Date(end_date);
+            //         } else {
+            //             // Obtener el último día del mes actual
+            //             fin_mes = new Date(year, month + 1, 0);
+            //         }
+                    
+            //         // Calcular días del mes y días completos del mes
+            //         const dias_mes = Math.round((fin_mes - inicio_mes) / (1000 * 60 * 60 * 24)) + 1;
+            //         const dias_mes_completo = new Date(year, month + 1, 0).getDate();
+                    
+            //         // Cálculo del pago
+            //         let pago_mes;
+                    
+            //         if (i === meses.length - 1) {  // ÚLTIMO PAGO
+            //             pago_mes = Math.min(monthly_value, contract_value - pago_acumulado);
+            //         } else {
+            //             if (inicio_mes.getDate() === 1 && fin_mes.getDate() === dias_mes_completo) {
+            //                 pago_mes = monthly_value;  // Mes completo
+            //             } else {
+            //                 pago_mes = Math.round((monthly_value / dias_mes_completo) * dias_mes);  // Prorrateo
+            //             }
+            //         }
+                    
+            //         // Calcular porcentajes
+            //         const porcentaje_mes = (pago_mes / contract_value) * 100;
+            //         pago_acumulado += pago_mes;
+            //         porcentaje_acumulado += porcentaje_mes;
+                    
+            //         const saldo_restante = Math.max(0, contract_value - pago_acumulado);  // No negativo
+                    
+            //         datos_mes.push({
+            //             'Mes': `MES ${i+1}`,
+            //             'Pago': `PAGO ${i+1}`,
+            //             'Fecha_Inicio': formatearFecha(inicio_mes),
+            //             'Fecha_Fin': formatearFecha(fin_mes),
+            //             'Dias': dias_mes,
+            //             'Dias_del_mes': dias_mes_completo,
+            //             'Valor_Base': i === meses.length - 1 ? monthly_value : null,  // Solo para último pago
+            //             'Valor_Pago': pago_mes,
+            //             'Valor_Acumulado': pago_acumulado,
+            //             'Porcentaje': Math.round(porcentaje_mes * 100) / 100,
+            //             'Porcentaje_Acumulado': Math.round(porcentaje_acumulado * 100) / 100,
+            //             'Saldo_Restante': saldo_restante
+            //         });
+            //     }
+                
+            //     // Asegurar que la suma total sea exacta y el saldo restante sea correcto
+            //     const total_pagos = datos_mes.reduce((sum, item) => sum + item.Valor_Pago, 0);
+            //     const diferencia = contract_value - total_pagos;
+            //     const duracion_dias = Math.round((end_date - start_date) / (1000 * 60 * 60 * 24)) + 1;
+            //     const valor_diario = Math.round((monthly_value / 30) * 100) / 100;
+                
+            //     return {
+            //         pagos: datos_mes,
+            //         resumen: {
+            //             total_pagos: total_pagos,
+            //             valor_contrato: contract_value,
+            //             diferencia: diferencia,
+            //             duracion_dias: duracion_dias,
+            //             valor_diario: valor_diario
+            //         }
+            //     };
+            // }
+          
+            
+
+
+
+            // [CAMBIO IMPORTANTE] - Actualización del cálculo de pagos para considerar siempre hasta el día 30
+function calcularPagosContrato(contract_value, start_date, end_date, monthly_value) {
+    const meses = [];
+    let fecha_actual = new Date(start_date);
+    
+    // Generar lista de meses
+    while (fecha_actual <= end_date) {
+        meses.push({
+            year: fecha_actual.getFullYear(),
+            month: fecha_actual.getMonth()
+        });
+        
+        let siguiente_mes = new Date(fecha_actual.getFullYear(), fecha_actual.getMonth(), 28);
+        siguiente_mes.setDate(siguiente_mes.getDate() + 4);
+        fecha_actual = new Date(siguiente_mes.getFullYear(), siguiente_mes.getMonth(), 1);
+    }
+    
+    const datos_mes = [];
+    let pago_acumulado = 0;
+    let porcentaje_acumulado = 0;
+    
+    for (let i = 0; i < meses.length; i++) {
+        const year = meses[i].year;
+        const month = meses[i].month;
+        
+        // Determinar período
+        const inicio_mes = i === 0 ? new Date(start_date) : new Date(year, month, 1);
+        
+        let fin_mes;
+        if (i === meses.length - 1) {
+            fin_mes = new Date(end_date);
+        } else {
+            // [CAMBIO] - Siempre considerar hasta el día 30 del mes
+            fin_mes = new Date(year, month + 1, 0); // Último día del mes
+            // Forzar a que el fin sea día 30 si el mes tiene más días
+            if (fin_mes.getDate() > 30) {
+                fin_mes = new Date(year, month, 30);
+            }
+        }
+        
+        // [CAMBIO] - Calcular días siempre considerando 30 días como máximo
+        const dias_mes = Math.min(
+            Math.round((fin_mes - inicio_mes) / (1000 * 60 * 60 * 24)) + 1,
+            30
+        );
+        
+        // [CAMBIO] - Siempre usar 30 días como base para el prorrateo
+        const dias_mes_completo = 30;
+        
+        // Cálculo del pago
+        let pago_mes;
+        
+        if (i === meses.length - 1) {  // ÚLTIMO PAGO
+            pago_mes = Math.min(monthly_value, contract_value - pago_acumulado);
+        } else {
+            if (inicio_mes.getDate() === 1 && fin_mes.getDate() === 30) {
+                pago_mes = monthly_value;  // Mes completo
+            } else {
+                // [CAMBIO] - Prorrateo basado siempre en 30 días
+                pago_mes = Math.round((monthly_value / 30) * dias_mes);  // Prorrateo
+            }
+        }
+        
+        // Calcular porcentajes
+        const porcentaje_mes = (pago_mes / contract_value) * 100;
+        pago_acumulado += pago_mes;
+        porcentaje_acumulado += porcentaje_mes;
+        
+        const saldo_restante = Math.max(0, contract_value - pago_acumulado);
+        
+        datos_mes.push({
+            'Mes': `MES ${i+1}`,
+            'Pago': `PAGO ${i+1}`,
+            'Fecha_Inicio': formatearFecha(inicio_mes),
+            'Fecha_Fin': formatearFecha(fin_mes),
+            'Dias': dias_mes,
+            'Dias_del_mes': 30,  // [CAMBIO] - Siempre mostrar 30 días como referencia
+            'Valor_Base': i === meses.length - 1 ? monthly_value : null,
+            'Valor_Pago': pago_mes,
+            'Valor_Acumulado': pago_acumulado,
+            'Porcentaje': Math.round(porcentaje_mes * 100) / 100,
+            'Porcentaje_Acumulado': Math.round(porcentaje_acumulado * 100) / 100,
+            'Saldo_Restante': saldo_restante
+        });
+    }
+    
+    // Asegurar que la suma total sea exacta
+    const total_pagos = datos_mes.reduce((sum, item) => sum + item.Valor_Pago, 0);
+    const diferencia = contract_value - total_pagos;
+    const duracion_dias = Math.round((end_date - start_date) / (1000 * 60 * 60 * 24)) + 1;
+    const valor_diario = Math.round((monthly_value / 30) * 100) / 100;  // [CAMBIO] - Basado en 30 días
+    
+    return {
+        pagos: datos_mes,
+        resumen: {
+            total_pagos: total_pagos,
+            valor_contrato: contract_value,
+            diferencia: diferencia,
+            duracion_dias: duracion_dias,
+            valor_diario: valor_diario
+        }
+    };
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+            // Formatear fecha como DD/MM/YYYY
+            function formatearFecha(fecha) {
+                const dia = fecha.getDate().toString().padStart(2, '0');
+                const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+                const anio = fecha.getFullYear();
+                return `${dia}/${mes}/${anio}`;
+            }
+            
+            // Mostrar resultados en la interfaz
+            function mostrarResultados(data, valorContrato, fechaInicio, fechaFin, valorMensual) {
+                // Mostrar sección de resumen
+                const resumen = document.getElementById('resultadoResumen');
+                resumen.classList.remove('d-none');
+                
+                // Calcular duración en meses y días de forma precisa
+                function calcularDuracionPrecisa(inicio, fin) {
+                    // Obtener año y mes de cada fecha
+                    let añoInicio = inicio.getFullYear();
+                    let mesInicio = inicio.getMonth();
+                    let diaInicio = inicio.getDate();
+                    
+                    let añoFin = fin.getFullYear();
+                    let mesFin = fin.getMonth();
+                    let diaFin = fin.getDate();
+                    
+                    // Calcular diferencia en meses
+                    let meses = (añoFin - añoInicio) * 12 + (mesFin - mesInicio);
+                    
+                    // Ajustar por días
+                    if (diaFin < diaInicio) {
+                        // Si el día final es menor que el inicial, restamos un mes
+                        // y contamos los días desde el día inicial hasta el fin del mes
+                        meses--;
+                        
+                        // Calcular días restantes
+                        const ultimoDiaMesAnterior = new Date(añoFin, mesFin, 0).getDate();
+                        const diasRestantes = ultimoDiaMesAnterior - diaInicio + diaFin;
+                        
+                        // Redondear: si hay 30 días o más, consideramos un mes completo
+                        if (diasRestantes >= 30) {
+                            return { meses: meses + 1, dias: 0 };
+                        }
+                        
+                        return { meses, dias: diasRestantes };
+                    } else if (diaFin > diaInicio) {
+                        // Si el día final es mayor, los días son la diferencia simple
+                        return { meses, dias: diaFin - diaInicio };
+                    } else {
+                        // Si los días son iguales, no hay días adicionales
+                        return { meses, dias: 0 };
+                    }
+                }
+                
+                const duracion = calcularDuracionPrecisa(fechaInicio, fechaFin);
+                let textoMesesDias = '';
+                
+                if (duracion.meses > 0) {
+                    textoMesesDias += `${duracion.meses} ${duracion.meses === 1 ? 'mes' : 'meses'}`;
+                    if (duracion.dias > 0) {
+                        textoMesesDias += ` y ${duracion.dias} ${duracion.dias === 1 ? 'día' : 'días'}`;
+                    }
+                } else {
+                    textoMesesDias = `${duracion.dias} ${duracion.dias === 1 ? 'día' : 'días'}`;
+                }
+                
+                // Formatear valores para el resumen
+                document.getElementById('resumenValorContrato').textContent = formatearValorMoneda(data.resumen.valor_contrato);
+                document.getElementById('resumenDuracion').textContent = textoMesesDias;
+                document.getElementById('resumenValorMensual').textContent = formatearValorMoneda(valorMensual);
+                document.getElementById('resumenValorDiario').textContent = formatearValorMoneda(data.resumen.valor_diario);
+                document.getElementById('resumenTotalPagos').textContent = formatearValorMoneda(data.resumen.total_pagos);
+                document.getElementById('resumenDiferencia').textContent = formatearValorMoneda(data.resumen.diferencia);
+                
+                // Mostrar tabla de pagos
+                const tablaPagos = document.getElementById('tablaPagos');
+                tablaPagos.innerHTML = '';
+                
+                // Llenar tabla con resultados
+                data.pagos.forEach(pago => {
+                    const fila = document.createElement('tr');
+                    
+                    fila.innerHTML = `
+                        <td>${pago.Mes}</td>
+                        <td>${pago.Pago}</td>
+                        <td>${pago.Fecha_Inicio}</td>
+                        <td>${pago.Fecha_Fin}</td>
+                        <td>${pago.Dias + 1} </td>
+                        <td>${pago.Dias_del_mes}</td>
+                        <td>${pago.Valor_Base ? formatearValorMoneda(pago.Valor_Base) : ''}</td>
+                        <td>${formatearValorMoneda(pago.Valor_Pago)}</td>
+                        <td>${formatearValorMoneda(pago.Valor_Acumulado)}</td>
+                        <td>${pago.Porcentaje}%</td>
+                        <td>${pago.Porcentaje_Acumulado}%</td>
+                        <td>${formatearValorMoneda(pago.Saldo_Restante)}</td>
+                    `;
+                    
+                    tablaPagos.appendChild(fila);
+                });
+                
+                // Mostrar sección de tabla
+                document.getElementById('resultadoTabla').classList.remove('d-none');
+                
+                // Hacer scroll suave hasta los resultados
+                document.getElementById('resultadoTabla').scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            // Formatear valores monetarios
+            function formatearValorMoneda(valor) {
+                return '$' + parseFloat(valor).toLocaleString('es-CO', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            }
+        });
+    </script>
+</body>
+</html> 

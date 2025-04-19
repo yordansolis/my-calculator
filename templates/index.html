@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Pagos de Contratos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-lg-10">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white text-center py-3">
+                        <h2>Calculadora de Pagos de Contratos</h2>
+                        <p class="mb-0">Método de valor mensual fijo con saldo final separado</p>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <form id="calculadoraForm">
+                                    <div class="mb-3">
+                                        <label for="valorContrato" class="form-label">Valor Total del Contrato (COP)</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">$</span>
+                                            <input type="text" class="form-control" id="valorContrato" placeholder="Ej: 10000000" required>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="fechaInicio" class="form-label">Fecha de Inicio</label>
+                                        <input type="text" class="form-control datepicker" id="fechaInicio" placeholder="DD/MM/YYYY" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="fechaFin" class="form-label">Fecha de Finalización</label>
+                                        <input type="text" class="form-control datepicker" id="fechaFin" placeholder="DD/MM/YYYY" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="valorMensual" class="form-label">Valor Mensual Fijo (COP)</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">$</span>
+                                            <input type="text" class="form-control" id="valorMensual" placeholder="Ej: 1000000" required>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100">Calcular Pagos</button>
+                                </form>
+                            </div>
+                            <div class="col-lg-6">
+                                <div id="resultadoResumen" class="d-none">
+                                    <h4 class="text-center mb-3">Resumen</h4>
+                                    <div class="card bg-light mb-3">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <strong>Valor del Contrato:</strong>
+                                                <span id="resumenValorContrato"></span>
+                                            </div>
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <strong>Duración:</strong>
+                                                <span id="resumenDuracion"></span>
+                                            </div>
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <strong>Valor Mensual Fijo:</strong>
+                                                <span id="resumenValorMensual"></span>
+                                            </div>
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <strong>Valor Diario de Referencia:</strong>
+                                                <span id="resumenValorDiario"></span>
+                                            </div>
+                                            <hr>
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <strong>Total Pagos Programados:</strong>
+                                                <span id="resumenTotalPagos"></span>
+                                            </div>
+                                            <div class="d-flex justify-content-between">
+                                                <strong>Diferencia:</strong>
+                                                <span id="resumenDiferencia"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="spinner" class="text-center d-none mt-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Calculando...</span>
+                            </div>
+                            <p>Calculando resultados...</p>
+                        </div>
+                        
+                        <div id="resultadoTabla" class="mt-4 d-none">
+                            <h4 class="text-center mb-3">Distribución de Pagos</h4>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead class="table-primary">
+                                        <tr>
+                                            <th>Mes</th>
+                                            <th>Pago</th>
+                                            <th>Fecha Inicio</th>
+                                            <th>Fecha Fin</th>
+                                            <th>Días</th>
+                                            <th>Valor Pago</th>
+                                            <th>Porcentaje</th>
+                                            <th>Saldo Restante</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tablaPagos">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div id="errorAlert" class="alert alert-danger mt-3 d-none" role="alert">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html> 
