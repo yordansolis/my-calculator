@@ -1,6 +1,6 @@
 [build]
 command = ""
-output_dir = "."
+output_dir = "/"
 
 [site]
-bucket = "." 
+bucket = "/"
