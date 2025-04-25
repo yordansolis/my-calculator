@@ -6,55 +6,78 @@
     <title>Calculadora de Pagos de Contratos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
+        /* Definición de variables CSS para tema claro */
         :root {
-            --bg-dark: #000000;
-            --bg-card: #111111;
-            --bg-input: #1a1a1a;
-            --bg-light: #222222;
-            --text-primary: #ffffff;
-            --text-secondary: #b0b0b0;
-            --accent-color: #0070f3;
-            --accent-hover: #0051ca;
-            --border-color: #333333;
-            --success-color: #0070f3;
-            --table-hover: rgba(0, 112, 243, 0.1);
-            --table-header: #1a1a1a;
-            --table-border: #333333;
+            --bg-dark: #f8f9fa;
+            --bg-card: #ffffff;
+            --bg-input: #ffffff;
+            --bg-light: #f1f3f5;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --accent-color: #3182ce;
+            --accent-hover: #2b6cb0;
+            --border-color: #e2e8f0;
+            --success-color: #3182ce;
+            --table-hover: rgba(49, 130, 206, 0.08);
+            --table-header: #ebf8ff;
+            --table-border: #e2e8f0;
+        }
+        
+        /* Definición de variables CSS para tema oscuro */
+        [data-theme="dark"] {
+            --bg-dark: #1a202c;
+            --bg-card: #2d3748;
+            --bg-input: #4a5568;
+            --bg-light: #283141;
+            --text-primary: #f7fafc;
+            --text-secondary: #e2e8f0;
+            --accent-color: #4299e1;
+            --accent-hover: #63b3ed;
+            --border-color: #4a5568;
+            --success-color: #4299e1;
+            --table-hover: rgba(49, 130, 206, 0.15);
+            --table-header: #2c5282;
+            --table-border: #4a5568;
         }
         
         body {
             background-color: var(--bg-dark);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: var(--text-primary);
+            transition: all 0.3s ease;
         }
 
         .card {
-            border-radius: 12px;
+            border-radius: 16px;
             overflow: hidden;
             border: 1px solid var(--border-color);
             transition: transform 0.3s, box-shadow 0.3s;
             background-color: var(--bg-card);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         }
 
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
         }
 
         .card-header {
-            background: linear-gradient(45deg, #000000, var(--accent-color));
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-primary);
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
+            border-bottom: 1px solid var(--accent-hover);
+            color: white;
+            padding: 1.5rem 1rem;
         }
 
         .card-body {
             background-color: var(--bg-card);
+            padding: 1.75rem;
         }
 
         .bg-light {
-            background-color: var(--bg-light) !important;
-            color: var(--text-primary);
+            background-color: var(--bg-card) !important;
+            color: var(--text-primary) !important;
             border: 1px solid var(--border-color);
         }
 
@@ -63,10 +86,18 @@
             background-color: var(--bg-input);
             border: 1px solid var(--border-color);
             color: var(--text-primary);
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+        }
+
+        .input-group-text {
+            background-color: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
         }
 
         .form-control:focus {
-            box-shadow: 0 0 0 0.25rem rgba(0, 112, 243, 0.25);
+            box-shadow: 0 0 0 0.25rem rgba(49, 130, 206, 0.25);
             background-color: var(--bg-input);
             color: var(--text-primary);
             border-color: var(--accent-color);
@@ -74,37 +105,46 @@
 
         .form-label {
             color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
         }
 
         .btn-primary {
-            background: linear-gradient(45deg, #0051ca, var(--accent-color));
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
             border: none;
-            padding: 10px 15px;
+            padding: 0.75rem 1.25rem;
             border-radius: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
             transition: all 0.3s ease;
         }
 
         .btn-primary:hover {
-            background: linear-gradient(45deg, #003d96, #0062d3);
+            background: linear-gradient(135deg, var(--accent-hover), var(--accent-color));
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 112, 243, 0.4);
+            box-shadow: 0 6px 15px rgba(49, 130, 206, 0.4);
         }
 
         .table {
-            border-radius: 10px;
+            border-radius: 12px;
             overflow: hidden;
             color: var(--text-primary);
             border-color: var(--table-border);
+            border-collapse: separate;
+            border-spacing: 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
         .table-primary {
             background-color: var(--table-header);
             color: var(--text-primary);
-            border-bottom: 1px solid var(--accent-color);
+            border-bottom: 2px solid var(--accent-color);
         }
         
         .table-striped > tbody > tr:nth-of-type(odd) {
-            background-color: rgba(26, 26, 26, 0.6);
+            background-color: rgba(49, 130, 206, 0.05);
         }
 
         .table-hover tbody tr:hover {
@@ -112,7 +152,7 @@
         }
 
         #resultadoResumen .card, #resultadoTabla {
-            box-shadow: 0 4px 6px rgba(58, 56, 56, 0.3);
+            box-shadow: 0 4px 6px rgba(58, 56, 56, 0.1);
         }
 
         /* Para dar formato al input del selector de fecha */
@@ -193,7 +233,7 @@
         .flatpickr-calendar {
             background: var(--bg-card);
             border-color: var(--border-color);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
         
         .flatpickr-current-month .flatpickr-monthDropdown-months,
@@ -234,8 +274,8 @@
         }
 
         /* Ajuste para el texto en la tarjeta de resumen */
-        .bg-light .d-flex {
-            color: var(--text-primary);
+        .d-flex strong, .d-flex span {
+            color: var(--text-primary) !important;
         }
 
         /* Mejora para la visibilidad del modo oscuro de flatpickr */
@@ -250,16 +290,124 @@
         .flatpickr-months {
             background-color: var(--bg-card);
         }
+        
+        /* Estilos para el botón de cambio de tema */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+        }
+        
+        .theme-toggle:hover {
+            transform: rotate(30deg) scale(1.1);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+        }
+        
+        /* Estilo para la imagen del membrete */
+        .membrete-img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Ocultar columnas específicas */
+        .hide-column {
+            display: none;
+        }
+
+        footer.footer {
+            background: linear-gradient(135deg, var(--bg-dark), var(--bg-card)) !important;
+            border-top: 1px solid var(--border-color);
+            padding: 2rem 0;
+        }
+        
+        footer a {
+            color: var(--accent-color) !important;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        footer a:hover {
+            color: var(--accent-hover) !important;
+            text-decoration: underline;
+        }
+        
+        /* Estilos para las tarjetas de resumen */
+        #resultadoResumen .card {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-card);
+            color: var(--text-primary);
+        }
+        
+        #resultadoResumen .card-body {
+            background-color: var(--bg-card);
+            color: var(--text-primary);
+        }
+        
+        #resultadoResumen h4, #resultadoTabla h4 {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        #resultadoResumen .d-flex {
+            padding: 0.6rem 0;
+            border-bottom: 1px dashed var(--border-color);
+        }
+        
+        #resultadoResumen .d-flex:last-child {
+            border-bottom: none;
+        }
+        
+        #resultadoResumen strong {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        hr {
+            border-color: var(--border-color);
+            opacity: 0.3;
+            margin: 1rem 0;
+        }
     </style>
 </head>
 <body>
+    <!-- Botón para cambiar tema -->
+    <button class="theme-toggle" id="themeToggle">
+        <i class="bi bi-sun-fill" id="themeIcon"></i>
+    </button>
+
     <div class="container">
-        <div class="row justify-content-center mt-5">
+        <div class="row justify-content-center mt-4">
+            <div class="col-lg-10 text-center">
+                <!-- Imagen de membrete en la parte superior -->
+                <img src="mebrete.png" alt="Membrete" class="membrete-img">
+            </div>
+        </div>
+        <div class="row justify-content-center mt-3">
             <div class="col-lg-10">
                 <div class="card shadow-lg">
                     <div class="card-header bg-primary text-white text-center py-3">
-                        <h2>Calculadora de Pagos de Contratos</h2>
-                        <p class="mb-0">Método de valor mensual fijo con saldo final separado</p>
+                        <h2 class="mb-2 fw-bold">Calculadora de Pagos de Contratos</h2>
+                        <p class="mb-0 fw-light">Método de valor mensual fijo con saldo final separado</p>
                     </div>
                     <div class="card-body p-4">
                         <div class="row">
@@ -292,8 +440,8 @@
                             </div>
                             <div class="col-lg-6">
                                 <div id="resultadoResumen" class="d-none">
-                                    <h4 class="text-center mb-3 text-white">Resumen</h4>
-                                    <div class="card bg-light mb-3">
+                                    <h4 class="text-center mb-3">Resumen del Contrato</h4>
+                                    <div class="card bg-card mb-3">
                                         <div class="card-body">
                                             <div class="d-flex justify-content-between mb-2">
                                                 <strong>Valor del Contrato:</strong>
@@ -334,7 +482,7 @@
                         </div>
                         
                         <div id="resultadoTabla" class="mt-4 d-none">
-                            <h4 class="text-center mb-3 text-white">Distribución de Pagos</h4>
+                            <h4 class="text-center mb-3">Distribución de Pagos Mensuales</h4>
                             <div class="table-responsive" style="overflow-x: auto; max-width: 100%;">
                                 <table class="table table-striped table-hover table-sm">
                                     <thead class="table-primary">
@@ -347,8 +495,8 @@
                                             <th>Días del mes</th>
                                             <th>Valor Base</th>
                                             <th>Valor Pago</th>
-                                            <th>Valor Acumulado</th>
-                                            <th>Porcentaje</th>
+                                            <th class="hide-column">Valor Acumulado</th>
+                                            <th class="hide-column">Porcentaje</th>
                                             <th>Porcentaje Acumulado</th>
                                             <th>Saldo Restante</th>
                                         </tr>
@@ -369,17 +517,18 @@
             </div>
         </div>
     </div>
-    <footer class="footer mt-5 py-3 bg-dark text-light">
+    <footer class="footer mt-5 py-3">
         <div class="container text-center">
             <div class="row">
                 <div class="col-md-12">
-                    <h5>Autor</h5>
+                    <h5 class="text-primary">Autor</h5>
                     <p class="mb-1"><strong>Jhordan Andres Asprilla Solis</strong></p>
-                    <p class="mb-1"><strong>Haminton Mena Mena </strong></p>
+                    <p class="mb-1"><strong>Haminton Mena Mena</strong></p>
 
                     <p class="mb-1">Ingeniero de Sistemas</p>
-                    <p class="mb-1">Contacto: <a href="tel:+573113834658" class="text-light">+57 3113834658</a></p>
-                    <p class="mb-0">LinkedIn: <a href="https://www.linkedin.com/in/jhordan-solis/" target="_blank" class="text-light">Jhordan Solis</a></p>
+                    <p class="mb-1">Contacto: <a href="tel:+573113834658">+57 3113834658</a></p>
+                    <p class="mb-0">LinkedIn: <a href="https://www.linkedin.com/in/jhordan-solis/" target="_blank">Jhordan Solis</a></p>
+                    <b>Coordinación de Juventud</b>
                 </div>
             </div>
         </div>
@@ -505,222 +654,113 @@
             }
             
             // Calcular los pagos del contrato (implementado en JavaScript)
-            // function calcularPagosContrato(contract_value, start_date, end_date, monthly_value) {
-            //     // Implementación JavaScript del algoritmo de cálculo
-            //     const meses = [];
-            //     let fecha_actual = new Date(start_date);
+            function calcularPagosContrato(contract_value, start_date, end_date, monthly_value) {
+                const meses = [];
+                let fecha_actual = new Date(start_date);
                 
-            //     // Generar lista de meses de manera idéntica a Python
-            //     while (fecha_actual <= end_date) {
-            //         meses.push({
-            //             year: fecha_actual.getFullYear(),
-            //             month: fecha_actual.getMonth()
-            //         });
+                // Generar lista de meses
+                while (fecha_actual <= end_date) {
+                    meses.push({
+                        year: fecha_actual.getFullYear(),
+                        month: fecha_actual.getMonth()
+                    });
                     
-            //         // Simular: siguiente_mes = fecha_actual.replace(day=28) + datetime.timedelta(days=4)
-            //         let siguiente_mes = new Date(fecha_actual.getFullYear(), fecha_actual.getMonth(), 28);
-            //         siguiente_mes.setDate(siguiente_mes.getDate() + 4);
-            //         // Simular: fecha_actual = siguiente_mes.replace(day=1)
-            //         fecha_actual = new Date(siguiente_mes.getFullYear(), siguiente_mes.getMonth(), 1);
-            //     }
+                    let siguiente_mes = new Date(fecha_actual.getFullYear(), fecha_actual.getMonth(), 28);
+                    siguiente_mes.setDate(siguiente_mes.getDate() + 4);
+                    fecha_actual = new Date(siguiente_mes.getFullYear(), siguiente_mes.getMonth(), 1);
+                }
                 
-            //     const datos_mes = [];
-            //     let pago_acumulado = 0;
-            //     let porcentaje_acumulado = 0;
+                const datos_mes = [];
+                let pago_acumulado = 0;
+                let porcentaje_acumulado = 0;
                 
-            //     for (let i = 0; i < meses.length; i++) {
-            //         const year = meses[i].year;
-            //         const month = meses[i].month;
+                for (let i = 0; i < meses.length; i++) {
+                    const year = meses[i].year;
+                    const month = meses[i].month;
                     
-            //         // Determinar período exactamente igual que en Python
-            //         const inicio_mes = i === 0 ? new Date(start_date) : new Date(year, month, 1);
+                    // Determinar período
+                    const inicio_mes = i === 0 ? new Date(start_date) : new Date(year, month, 1);
                     
-            //         let fin_mes;
-            //         if (i === meses.length - 1) {
-            //             fin_mes = new Date(end_date);
-            //         } else {
-            //             // Obtener el último día del mes actual
-            //             fin_mes = new Date(year, month + 1, 0);
-            //         }
+                    let fin_mes;
+                    if (i === meses.length - 1) {
+                        fin_mes = new Date(end_date);
+                    } else {
+                        // [CAMBIO] - Siempre considerar hasta el día 30 del mes
+                        fin_mes = new Date(year, month + 1, 0); // Último día del mes
+                        // Forzar a que el fin sea día 30 si el mes tiene más días
+                        if (fin_mes.getDate() > 30) {
+                            fin_mes = new Date(year, month, 30);
+                        }
+                    }
                     
-            //         // Calcular días del mes y días completos del mes
-            //         const dias_mes = Math.round((fin_mes - inicio_mes) / (1000 * 60 * 60 * 24)) + 1;
-            //         const dias_mes_completo = new Date(year, month + 1, 0).getDate();
+                    // [CAMBIO] - Calcular días siempre considerando 30 días como máximo
+                    const dias_mes = Math.min(
+                        Math.round((fin_mes - inicio_mes) / (1000 * 60 * 60 * 24)) + 1,
+                        30
+                    );
                     
-            //         // Cálculo del pago
-            //         let pago_mes;
+                    // Obtener el número real de días del mes para mostrar en la tabla
+                    const dias_reales_mes = new Date(year, month + 1, 0).getDate();
                     
-            //         if (i === meses.length - 1) {  // ÚLTIMO PAGO
-            //             pago_mes = Math.min(monthly_value, contract_value - pago_acumulado);
-            //         } else {
-            //             if (inicio_mes.getDate() === 1 && fin_mes.getDate() === dias_mes_completo) {
-            //                 pago_mes = monthly_value;  // Mes completo
-            //             } else {
-            //                 pago_mes = Math.round((monthly_value / dias_mes_completo) * dias_mes);  // Prorrateo
-            //             }
-            //         }
+                    // [CAMBIO] - Siempre usar 30 días como base para el prorrateo (para cálculos),
+                    // pero mostrar el número real de días del mes en la tabla
+                    const dias_mes_completo = 30;
                     
-            //         // Calcular porcentajes
-            //         const porcentaje_mes = (pago_mes / contract_value) * 100;
-            //         pago_acumulado += pago_mes;
-            //         porcentaje_acumulado += porcentaje_mes;
+                    // Cálculo del pago
+                    let pago_mes;
                     
-            //         const saldo_restante = Math.max(0, contract_value - pago_acumulado);  // No negativo
+                    if (i === meses.length - 1) {  // ÚLTIMO PAGO
+                        pago_mes = Math.min(monthly_value, contract_value - pago_acumulado);
+                    } else {
+                        if (inicio_mes.getDate() === 1 && fin_mes.getDate() === 30) {
+                            pago_mes = monthly_value;  // Mes completo
+                        } else {
+                            // [CAMBIO] - Prorrateo basado siempre en 30 días
+                            pago_mes = Math.round((monthly_value / 30) * dias_mes);  // Prorrateo
+                        }
+                    }
                     
-            //         datos_mes.push({
-            //             'Mes': `MES ${i+1}`,
-            //             'Pago': `PAGO ${i+1}`,
-            //             'Fecha_Inicio': formatearFecha(inicio_mes),
-            //             'Fecha_Fin': formatearFecha(fin_mes),
-            //             'Dias': dias_mes,
-            //             'Dias_del_mes': dias_mes_completo,
-            //             'Valor_Base': i === meses.length - 1 ? monthly_value : null,  // Solo para último pago
-            //             'Valor_Pago': pago_mes,
-            //             'Valor_Acumulado': pago_acumulado,
-            //             'Porcentaje': Math.round(porcentaje_mes * 100) / 100,
-            //             'Porcentaje_Acumulado': Math.round(porcentaje_acumulado * 100) / 100,
-            //             'Saldo_Restante': saldo_restante
-            //         });
-            //     }
+                    // Calcular porcentajes
+                    const porcentaje_mes = (pago_mes / contract_value) * 100;
+                    pago_acumulado += pago_mes;
+                    porcentaje_acumulado += porcentaje_mes;
+                    
+                    const saldo_restante = Math.max(0, contract_value - pago_acumulado);
+                    
+                    datos_mes.push({
+                        'Mes': `MES ${i+1}`,
+                        'Pago': `PAGO ${i+1}`,
+                        'Fecha_Inicio': formatearFecha(inicio_mes),
+                        'Fecha_Fin': formatearFecha(fin_mes),
+                        'Dias': dias_mes,
+                        'Dias_del_mes': dias_reales_mes,
+                        'Valor_Base': i === meses.length - 1 ? monthly_value : null,
+                        'Valor_Pago': pago_mes,
+                        'Valor_Acumulado': pago_acumulado,
+                        'Porcentaje': Math.round(porcentaje_mes * 100) / 100,
+                        'Porcentaje_Acumulado': Math.round(porcentaje_acumulado * 100) / 100,
+                        'Saldo_Restante': saldo_restante
+                    });
+                }
                 
-            //     // Asegurar que la suma total sea exacta y el saldo restante sea correcto
-            //     const total_pagos = datos_mes.reduce((sum, item) => sum + item.Valor_Pago, 0);
-            //     const diferencia = contract_value - total_pagos;
-            //     const duracion_dias = Math.round((end_date - start_date) / (1000 * 60 * 60 * 24)) + 1;
-            //     const valor_diario = Math.round((monthly_value / 30) * 100) / 100;
+                // Asegurar que la suma total sea exacta
+                const total_pagos = datos_mes.reduce((sum, item) => sum + item.Valor_Pago, 0);
+                const diferencia = contract_value - total_pagos;
+                const duracion_dias = Math.round((end_date - start_date) / (1000 * 60 * 60 * 24)) + 1;
+                const valor_diario = Math.round((monthly_value / 30) * 100) / 100;  // [CAMBIO] - Basado en 30 días
                 
-            //     return {
-            //         pagos: datos_mes,
-            //         resumen: {
-            //             total_pagos: total_pagos,
-            //             valor_contrato: contract_value,
-            //             diferencia: diferencia,
-            //             duracion_dias: duracion_dias,
-            //             valor_diario: valor_diario
-            //         }
-            //     };
-            // }
-          
+                return {
+                    pagos: datos_mes,
+                    resumen: {
+                        total_pagos: total_pagos,
+                        valor_contrato: contract_value,
+                        diferencia: diferencia,
+                        duracion_dias: duracion_dias,
+                        valor_diario: valor_diario
+                    }
+                };
+            }
             
-
-
-
-            // [CAMBIO IMPORTANTE] - Actualización del cálculo de pagos para considerar siempre hasta el día 30
-function calcularPagosContrato(contract_value, start_date, end_date, monthly_value) {
-    const meses = [];
-    let fecha_actual = new Date(start_date);
-    
-    // Generar lista de meses
-    while (fecha_actual <= end_date) {
-        meses.push({
-            year: fecha_actual.getFullYear(),
-            month: fecha_actual.getMonth()
-        });
-        
-        let siguiente_mes = new Date(fecha_actual.getFullYear(), fecha_actual.getMonth(), 28);
-        siguiente_mes.setDate(siguiente_mes.getDate() + 4);
-        fecha_actual = new Date(siguiente_mes.getFullYear(), siguiente_mes.getMonth(), 1);
-    }
-    
-    const datos_mes = [];
-    let pago_acumulado = 0;
-    let porcentaje_acumulado = 0;
-    
-    for (let i = 0; i < meses.length; i++) {
-        const year = meses[i].year;
-        const month = meses[i].month;
-        
-        // Determinar período
-        const inicio_mes = i === 0 ? new Date(start_date) : new Date(year, month, 1);
-        
-        let fin_mes;
-        if (i === meses.length - 1) {
-            fin_mes = new Date(end_date);
-        } else {
-            // [CAMBIO] - Siempre considerar hasta el día 30 del mes
-            fin_mes = new Date(year, month + 1, 0); // Último día del mes
-            // Forzar a que el fin sea día 30 si el mes tiene más días
-            if (fin_mes.getDate() > 30) {
-                fin_mes = new Date(year, month, 30);
-            }
-        }
-        
-        // [CAMBIO] - Calcular días siempre considerando 30 días como máximo
-        const dias_mes = Math.min(
-            Math.round((fin_mes - inicio_mes) / (1000 * 60 * 60 * 24)) + 1,
-            30
-        );
-        
-        // [CAMBIO] - Siempre usar 30 días como base para el prorrateo
-        const dias_mes_completo = 30;
-        
-        // Cálculo del pago
-        let pago_mes;
-        
-        if (i === meses.length - 1) {  // ÚLTIMO PAGO
-            pago_mes = Math.min(monthly_value, contract_value - pago_acumulado);
-        } else {
-            if (inicio_mes.getDate() === 1 && fin_mes.getDate() === 30) {
-                pago_mes = monthly_value;  // Mes completo
-            } else {
-                // [CAMBIO] - Prorrateo basado siempre en 30 días
-                pago_mes = Math.round((monthly_value / 30) * dias_mes);  // Prorrateo
-            }
-        }
-        
-        // Calcular porcentajes
-        const porcentaje_mes = (pago_mes / contract_value) * 100;
-        pago_acumulado += pago_mes;
-        porcentaje_acumulado += porcentaje_mes;
-        
-        const saldo_restante = Math.max(0, contract_value - pago_acumulado);
-        
-        datos_mes.push({
-            'Mes': `MES ${i+1}`,
-            'Pago': `PAGO ${i+1}`,
-            'Fecha_Inicio': formatearFecha(inicio_mes),
-            'Fecha_Fin': formatearFecha(fin_mes),
-            'Dias': dias_mes,
-            'Dias_del_mes': 30,  // [CAMBIO] - Siempre mostrar 30 días como referencia
-            'Valor_Base': i === meses.length - 1 ? monthly_value : null,
-            'Valor_Pago': pago_mes,
-            'Valor_Acumulado': pago_acumulado,
-            'Porcentaje': Math.round(porcentaje_mes * 100) / 100,
-            'Porcentaje_Acumulado': Math.round(porcentaje_acumulado * 100) / 100,
-            'Saldo_Restante': saldo_restante
-        });
-    }
-    
-    // Asegurar que la suma total sea exacta
-    const total_pagos = datos_mes.reduce((sum, item) => sum + item.Valor_Pago, 0);
-    const diferencia = contract_value - total_pagos;
-    const duracion_dias = Math.round((end_date - start_date) / (1000 * 60 * 60 * 24)) + 1;
-    const valor_diario = Math.round((monthly_value / 30) * 100) / 100;  // [CAMBIO] - Basado en 30 días
-    
-    return {
-        pagos: datos_mes,
-        resumen: {
-            total_pagos: total_pagos,
-            valor_contrato: contract_value,
-            diferencia: diferencia,
-            duracion_dias: duracion_dias,
-            valor_diario: valor_diario
-        }
-    };
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
             // Formatear fecha como DD/MM/YYYY
             function formatearFecha(fecha) {
                 const dia = fecha.getDate().toString().padStart(2, '0');
@@ -811,8 +851,8 @@ function calcularPagosContrato(contract_value, start_date, end_date, monthly_val
                         <td>${pago.Dias_del_mes}</td>
                         <td>${pago.Valor_Base ? formatearValorMoneda(pago.Valor_Base) : ''}</td>
                         <td>${formatearValorMoneda(pago.Valor_Pago)}</td>
-                        <td>${formatearValorMoneda(pago.Valor_Acumulado)}</td>
-                        <td>${pago.Porcentaje}%</td>
+                        <td class="hide-column">${formatearValorMoneda(pago.Valor_Acumulado)}</td>
+                        <td class="hide-column">${pago.Porcentaje}%</td>
                         <td>${pago.Porcentaje_Acumulado}%</td>
                         <td>${formatearValorMoneda(pago.Saldo_Restante)}</td>
                     `;
@@ -833,6 +873,48 @@ function calcularPagosContrato(contract_value, start_date, end_date, monthly_val
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2
                 });
+            }
+            
+            // Funcionalidad para cambiar entre modo claro y oscuro
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            
+            // Comprobar si hay una preferencia guardada
+            const currentTheme = localStorage.getItem('theme');
+            if (currentTheme) {
+                document.documentElement.setAttribute('data-theme', currentTheme);
+                updateThemeIcon(currentTheme);
+            } else {
+                // Establecer el tema oscuro como predeterminado si no hay preferencia guardada
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                updateThemeIcon('dark');
+            }
+            
+            themeToggle.addEventListener('click', function() {
+                let theme = document.documentElement.getAttribute('data-theme');
+                
+                if (theme === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                    localStorage.setItem('theme', 'light');
+                    updateThemeIcon('light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                    updateThemeIcon('dark');
+                }
+            });
+            
+            function updateThemeIcon(theme) {
+                if (theme === 'dark') {
+                    // En modo oscuro, mostramos el sol (indica que al hacer clic cambiará a modo claro)
+                    themeIcon.classList.remove('bi-moon-fill');
+                    themeIcon.classList.add('bi-sun-fill');
+                } else {
+                    // En modo claro, mostramos la luna (indica que al hacer clic cambiará a modo oscuro)
+                    themeIcon.classList.remove('bi-sun-fill');
+                    themeIcon.classList.add('bi-moon-fill');
+                }
             }
         });
     </script>
